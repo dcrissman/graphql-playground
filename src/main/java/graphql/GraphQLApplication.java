@@ -1,0 +1,49 @@
+package graphql;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+/**
+ * @see https://spring.io/guides/gs/spring-boot/
+ * @see http://www.baeldung.com/spring-graphql
+ * @see https://github.com/eugenp/tutorials/tree/master/spring-boot/src/main/java/com/baeldung/graphql
+ * @author dcrissman
+ */
+@SpringBootApplication
+public class GraphQLApplication {
+
+    private final List<Post> posts = Arrays.asList(
+            new Post("1", "fake", "cat1", "a1"),
+            new Post("2", "fake2", "cat1", "a1"),
+            new Post("3", "fake3", "cat1", "a1"),
+            new Post("4", "fake4", "cat2", "a1"),
+            new Post("5", "fake5", "cat2", "a1"),
+            new Post("6", "fake6", "cat2", "a1"));
+
+    private final List<Author> authors = Arrays.asList(
+            new Author("a1", "fake author", "path/to/image"));
+
+    public static void main(String[] args) {
+        SpringApplication.run(GraphQLApplication.class, args);
+    }
+
+    @Bean
+    public PostQuery query() {
+        return new PostQuery(posts);
+    }
+
+    @Bean
+    public PostResolver postResolver() {
+        return new PostResolver(authors);
+    }
+
+    @Bean
+    public AuthorResolver authorResolver() {
+        return new AuthorResolver(posts);
+    }
+
+}
