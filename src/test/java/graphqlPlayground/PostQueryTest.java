@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,17 +50,26 @@ public class PostQueryTest {
     }
 
     @Test
-    @Ignore
     public void testAllPosts() throws Exception {
-        String query = "{posts {title}}";
+        String query = "{posts {category}}";
 
         ResponseEntity<ExecutionResultImpl> postsResponse = template.postForEntity(
                 base.toString(),
                 generateRequest(query),
                 ExecutionResultImpl.class);
 
+        //{posts=[{category=cat1}, {category=cat1}, {category=cat1}, {category=cat2}, {category=cat2}, {category=cat2}]}
         assertNotNull(postsResponse.getBody());
         assertNotNull(postsResponse.getBody().getData());
+        Map<String, List<Map<String, String>>> data = (Map<String, List<Map<String, String>>>) postsResponse.getBody().getData();
+        assertTrue(data.containsKey("posts"));
+        assertEquals(6, data.get("posts").size());
+        assertEquals("cat1", data.get("posts").get(0).get("category"));
+        assertEquals("cat1", data.get("posts").get(1).get("category"));
+        assertEquals("cat1", data.get("posts").get(2).get("category"));
+        assertEquals("cat2", data.get("posts").get(3).get("category"));
+        assertEquals("cat2", data.get("posts").get(4).get("category"));
+        assertEquals("cat2", data.get("posts").get(5).get("category"));
     }
 
     @Test

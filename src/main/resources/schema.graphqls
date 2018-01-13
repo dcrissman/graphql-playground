@@ -14,6 +14,11 @@ type Author {
 }
  
 # The Root Query for the application
-type Query {
+schema {
+    query: QueryType
+}
+
+type QueryType {
+    posts : [Post]!
     recentPosts(count: Int, offset: Int): [Post]!
 }
