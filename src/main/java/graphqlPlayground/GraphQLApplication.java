@@ -32,8 +32,8 @@ public class GraphQLApplication {
     }
 
     @Bean
-    public PostQuery query() {
-        return new PostQuery(posts);
+    public QueryResolver query() {
+        return new QueryResolver(posts, authors);
     }
 
     @Bean

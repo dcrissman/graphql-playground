@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
-public class PostQuery implements GraphQLQueryResolver {
+public class QueryResolver implements GraphQLQueryResolver {
 
     private final List<Post> posts;
+    private final List<Author> authors;
 
-    public PostQuery(List<Post> posts) {
+    public QueryResolver(List<Post> posts, List<Author> authors) {
         this.posts = posts;
+        this.authors = authors;
     }
 
     public List<Post> getPosts() {
@@ -18,5 +20,9 @@ public class PostQuery implements GraphQLQueryResolver {
 
     public List<Post> getRecentPosts(int count, int offset) {
         return posts.subList(offset, offset + count);
+    }
+
+    public List<Author> getAuthors() {
+        return authors;
     }
 }

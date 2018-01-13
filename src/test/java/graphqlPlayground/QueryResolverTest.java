@@ -22,11 +22,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * @see https://spring.io/guides/gs/spring-boot/
  * @see https://github.com/merapar/graphql-spring-boot-starter/blob/master/graphql-core/src/test/java/com/merapar/graphql/controller/GraphQlControllerTest.java
+ * @see http://graphql-java.readthedocs.io/en/stable/schema.html
  * @author dcrissman
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class PostQueryTest {
+public class QueryResolverTest {
 
     @LocalServerPort
     private int port;
@@ -89,6 +90,24 @@ public class PostQueryTest {
         assertEquals(2, data.get("recentPosts").size());
         assertEquals("fake2", data.get("recentPosts").get(0).get("title"));
         assertEquals("fake3", data.get("recentPosts").get(1).get("title"));
+    }
+
+    @Test
+    public void testAuthors() throws Exception {
+        String query = "{authors {name}}";
+
+        ResponseEntity<ExecutionResultImpl> postsResponse = template.postForEntity(
+                base.toString(),
+                generateRequest(query),
+                ExecutionResultImpl.class);
+
+        //{recentPosts=[{title=fake2}, {title=fake3}]}
+        assertNotNull(postsResponse.getBody());
+        assertNotNull(postsResponse.getBody().getData());
+        Map<String, List<Map<String, String>>> data = (Map<String, List<Map<String, String>>>) postsResponse.getBody().getData();
+        assertTrue(data.containsKey("authors"));
+        assertEquals(1, data.get("authors").size());
+        assertEquals("fake author", data.get("authors").get(0).get("name"));
     }
 
 }

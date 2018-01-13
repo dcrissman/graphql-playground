@@ -21,4 +21,5 @@ schema {
 type QueryType {
     posts : [Post]!
     recentPosts(count: Int, offset: Int): [Post]!
+    authors : [Author]!
 }
