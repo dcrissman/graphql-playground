@@ -110,4 +110,18 @@ public class QueryResolverTest {
         assertEquals("fake author", data.get("authors").get(0).get("name"));
     }
 
+    @Test
+    public void testWritePost() throws Exception {
+        String mutation = "mutation {writePost(title: \"anewbook\", text: \"blah\", category: \"newcat\") {title}}";
+
+        ResponseEntity<ExecutionResultImpl> postsResponse = template.postForEntity(
+                base.toString(),
+                generateRequest(mutation),
+                ExecutionResultImpl.class);
+
+        //{writePost={title=anewbook}}
+        assertNotNull(postsResponse.getBody());
+        assertNotNull(postsResponse.getBody().getData());
+    }
+
 }

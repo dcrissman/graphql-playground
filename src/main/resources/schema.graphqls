@@ -13,13 +13,17 @@ type Author {
     posts: [Post]!
 }
  
-# The Root Query for the application
 schema {
     query: QueryType
+    mutation: MutationType
 }
 
 type QueryType {
     posts : [Post]!
     recentPosts(count: Int, offset: Int): [Post]!
     authors : [Author]!
+}
+
+type MutationType {
+    writePost(title: String!, text: String!, category: String) : Post!
 }
