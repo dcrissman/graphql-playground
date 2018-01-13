@@ -1,12 +1,12 @@
-package graphql;
+package graphqlPlayground;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -43,54 +43,44 @@ public class PostQueryTest {
     }
 
     private String generateRequest(String query) throws Exception {
-        return generateRequest(query, null);
-    }
-
-    private String generateRequest(String query, Map<String, String> variables) throws Exception {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("query", query);
-
-        if (variables != null) {
-            JSONObject vars = new JSONObject();
-            for (Entry<String, String> entry : variables.entrySet()) {
-                vars.put(entry.getKey(), entry.getValue());
-            }
-
-            jsonObject.put("variables", vars);
-        }
 
         return jsonObject.toString();
     }
 
     @Test
+    @Ignore
     public void testAllPosts() throws Exception {
-        String query = "{Post {title}}";
+        String query = "{posts {title}}";
 
-        ResponseEntity<Post[]> postsResponse = template.postForEntity(
+        ResponseEntity<ExecutionResultImpl> postsResponse = template.postForEntity(
                 base.toString(),
                 generateRequest(query),
-                Post[].class);
+                ExecutionResultImpl.class);
 
         assertNotNull(postsResponse.getBody());
-        assertEquals(1, postsResponse.getBody().length);
+        assertNotNull(postsResponse.getBody().getData());
     }
 
     @Test
-    public void test() throws Exception {
-        String query = "{recentPosts {title}}";
-        Map<String, String> variables = new HashMap<>();
-        variables.put("count", "1");
-        variables.put("offset", "1");
+    public void testRecentPosts() throws Exception {
+        String query = "{recentPosts(count: 2, offset: 1) {title}}";
 
-
-        ResponseEntity<Post[]> postsResponse = template.postForEntity(
+        ResponseEntity<ExecutionResultImpl> postsResponse = template.postForEntity(
                 base.toString(),
-                generateRequest(query, variables),
-                Post[].class);
+                generateRequest(query),
+                ExecutionResultImpl.class);
 
+        //{recentPosts=[{title=fake2}, {title=fake3}]}
         assertNotNull(postsResponse.getBody());
-        assertEquals(1, postsResponse.getBody().length);
+        assertNotNull(postsResponse.getBody().getData());
+        Map<String, List<Map<String, String>>> data = (Map<String, List<Map<String, String>>>) postsResponse.getBody().getData();
+        assertTrue(data.containsKey("recentPosts"));
+        assertEquals(2, data.get("recentPosts").size());
+        assertEquals("fake2", data.get("recentPosts").get(0).get("title"));
+        assertEquals("fake3", data.get("recentPosts").get(1).get("title"));
     }
 
 }

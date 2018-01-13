@@ -1,4 +1,4 @@
-package graphql;
+package graphqlPlayground;
 
 import java.util.List;
 
@@ -10,6 +10,10 @@ public class PostQuery implements GraphQLQueryResolver {
 
     public PostQuery(List<Post> posts) {
         this.posts = posts;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
     }
 
     public List<Post> getRecentPosts(int count, int offset) {

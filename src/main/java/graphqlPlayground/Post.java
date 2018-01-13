@@ -1,4 +1,4 @@
-package graphql;
+package graphqlPlayground;
 
 public class Post {
     private String id;

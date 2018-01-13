@@ -1,4 +1,4 @@
-package graphql;
+package graphqlPlayground;
 
 public class Author {
     private String id;
